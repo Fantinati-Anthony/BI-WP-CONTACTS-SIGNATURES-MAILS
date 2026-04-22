@@ -5,6 +5,7 @@ use BI_Signatures\Core\Post_Types;
 use BI_Signatures\Core\Meta_Fields;
 use BI_Signatures\Core\Renderer;
 use BI_Signatures\Core\Banner_Router;
+use BI_Signatures\Core\Presets;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -31,6 +32,17 @@ class Meta_Boxes {
         add_meta_box( 'bi_sig_contact_preview', __( 'Aperçu signature', 'bi-signatures' ), array( $this, 'render_contact_preview' ), Post_Types::CONTACT, 'side', 'default' );
         add_meta_box( 'bi_sig_banner_fields', __( 'Image & slug de la bannière', 'bi-signatures' ), array( $this, 'render_banner' ), Post_Types::BANNER, 'normal', 'high' );
         add_meta_box( 'bi_sig_template_help', __( 'Variables disponibles', 'bi-signatures' ), array( $this, 'render_template_help' ), Post_Types::TEMPLATE, 'side', 'default' );
+        add_meta_box( 'bi_sig_template_presets', __( 'Mises en forme préétablies', 'bi-signatures' ), array( $this, 'render_template_presets' ), Post_Types::TEMPLATE, 'normal', 'high' );
+    }
+
+    public function render_template_presets() {
+        $presets = Presets::all();
+        echo '<p>' . esc_html__( 'Cliquez sur un preset pour remplacer le contenu de l\'éditeur par le HTML correspondant.', 'bi-signatures' ) . '</p>';
+        echo '<div class="bi-sig-presets">';
+        foreach ( $presets as $id => $preset ) {
+            echo '<button type="button" class="button bi-sig-preset-btn" data-preset="' . esc_attr( $id ) . '" title="' . esc_attr( $preset['description'] ) . '">' . esc_html( $preset['label'] ) . '</button> ';
+        }
+        echo '</div>';
     }
 
     public function render_contact( $post ) {

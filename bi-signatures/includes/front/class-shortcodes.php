@@ -4,6 +4,7 @@ namespace BI_Signatures\Front;
 use BI_Signatures\Core\Renderer;
 use BI_Signatures\Core\Post_Types;
 use BI_Signatures\Core\Meta_Fields;
+use BI_Signatures\Core\Presets;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -236,6 +237,8 @@ class Shortcodes {
             }
         }
 
+        $presets = Presets::all();
+
         ob_start();
         ?>
         <form method="post" class="bi-sig-template-form">
@@ -243,8 +246,16 @@ class Shortcodes {
             <input type="hidden" name="bi_sig_action" value="save_template" />
             <input type="hidden" name="template_id" value="<?php echo esc_attr( $id ); ?>" />
             <p><label><?php esc_html_e( 'Nom du modèle', 'bi-signatures' ); ?> *<br><input type="text" name="title" required value="<?php echo esc_attr( $title ); ?>" /></label></p>
+
+            <div class="bi-sig-presets">
+                <strong><?php esc_html_e( 'Mises en forme préétablies :', 'bi-signatures' ); ?></strong><br>
+                <?php foreach ( $presets as $pid => $preset ) : ?>
+                    <button type="button" class="bi-sig-preset-btn" data-preset="<?php echo esc_attr( $pid ); ?>" data-html="<?php echo esc_attr( $preset['html'] ); ?>" title="<?php echo esc_attr( $preset['description'] ); ?>"><?php echo esc_html( $preset['label'] ); ?></button>
+                <?php endforeach; ?>
+            </div>
+
             <p><label><?php esc_html_e( 'Contenu HTML (utilisez {{variables}})', 'bi-signatures' ); ?><br>
-                <textarea name="content" rows="12" style="width:100%;font-family:monospace;"><?php echo esc_textarea( $content ); ?></textarea></label></p>
+                <textarea name="content" rows="12" style="width:100%;font-family:monospace;" data-bi-sig-template-content><?php echo esc_textarea( $content ); ?></textarea></label></p>
             <p><button type="submit"><?php esc_html_e( 'Enregistrer le modèle', 'bi-signatures' ); ?></button></p>
         </form>
         <?php

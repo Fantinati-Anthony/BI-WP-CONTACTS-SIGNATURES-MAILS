@@ -65,6 +65,17 @@
         });
     });
 
+    $(document).on('click', '.bi-sig-template-form .bi-sig-preset-btn', function(e){
+        e.preventDefault();
+        var html = $(this).data('html');
+        var $ta = $(this).closest('form').find('[data-bi-sig-template-content]');
+        if (!$ta.length) { return; }
+        if ($ta.val().replace(/\s/g,'').length > 0) {
+            if (!window.confirm(BISigFront.i18n.confirm_replace || 'Remplacer le contenu actuel ?')) { return; }
+        }
+        $ta.val(html).trigger('change');
+    });
+
     var previewTimer = null;
     $(document).on('input change', '.bi-sig-form input, .bi-sig-form select', function(){
         var $form = $(this).closest('.bi-sig-form');

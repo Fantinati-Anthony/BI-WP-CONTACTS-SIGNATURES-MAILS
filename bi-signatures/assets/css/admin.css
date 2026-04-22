@@ -1,3 +1,5 @@
 .bi-sig-preview{background:#fff;padding:10px;border:1px solid #ddd;overflow:auto;max-width:100%;}
 .bi-sig-preview img{max-width:100%;height:auto;}
 .bi-sig-media-btn{margin-left:5px;}
+.bi-sig-presets{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;}
+.bi-sig-presets .bi-sig-preset-btn{cursor:pointer;}
