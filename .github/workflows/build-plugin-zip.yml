@@ -1,0 +1,97 @@
+name: Build WordPress plugin ZIP
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read plugin version
+        id: version
+        run: |
+          VER=$(grep -E "^[[:space:]]*\*[[:space:]]*Version:" bi-signatures/bi-signatures.php | head -1 | sed -E 's/.*Version:[[:space:]]*//; s/[[:space:]]+$//')
+          if [ -z "$VER" ]; then
+            echo "Could not parse Version header from bi-signatures/bi-signatures.php" >&2
+            exit 1
+          fi
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+          echo "short_sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+          echo "Plugin version: $VER"
+
+      - name: Build plugin ZIP
+        id: build
+        run: |
+          mkdir -p build
+          ZIP_NAME="bi-signatures-v${{ steps.version.outputs.version }}.zip"
+          zip -r "build/${ZIP_NAME}" bi-signatures \
+            -x "bi-signatures/.git*" \
+            -x "bi-signatures/node_modules/*" \
+            -x "bi-signatures/tests/*" \
+            -x "bi-signatures/.github/*" \
+            -x "bi-signatures/.DS_Store"
+          echo "zip_name=${ZIP_NAME}" >> "$GITHUB_OUTPUT"
+          ls -la build/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.build.outputs.zip_name }}
+          path: build/${{ steps.build.outputs.zip_name }}
+          retention-days: 90
+          if-no-files-found: error
+
+      - name: Check if release tag exists
+        id: tag_check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="v${{ steps.version.outputs.version }}"
+          if gh release view "$TAG" --repo "${{ github.repository }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create versioned release
+        if: steps.tag_check.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: v${{ steps.version.outputs.version }}
+          body: |
+            Plugin WordPress **BI Contacts & Signatures Mails** v${{ steps.version.outputs.version }}
+
+            Commit : ${{ steps.version.outputs.short_sha }}
+
+            Téléchargez le fichier `.zip` ci-dessous et importez-le dans WordPress via *Extensions → Ajouter → Téléverser une extension*.
+          files: build/${{ steps.build.outputs.zip_name }}
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: true
+
+      - name: Update rolling "latest-main" pre-release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest-main
+          name: Dernière build main
+          body: |
+            Build automatique du dernier merge sur `main`.
+
+            Version plugin : **${{ steps.version.outputs.version }}**
+            Commit : `${{ steps.version.outputs.short_sha }}`
+          files: build/${{ steps.build.outputs.zip_name }}
+          draft: false
+          prerelease: true
+          make_latest: false
