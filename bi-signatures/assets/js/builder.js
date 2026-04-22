@@ -47,6 +47,8 @@
         window.biSigEditor = editor;
         syncField();
 
+        editor.on('load', customizeStyleManager);
+
         editor.on('update', syncField);
         editor.on('component:update', syncField);
         editor.on('component:add', syncField);
@@ -55,6 +57,64 @@
 
         $('form#post').on('submit', function(){
             syncField(true);
+        });
+    }
+
+    function customizeStyleManager(){
+        if (!editor) { return; }
+        var sm = editor.StyleManager;
+        var sector = 'decorations';
+
+        try { sm.removeProperty(sector, 'border'); } catch (e) {}
+
+        var styleOptions = [
+            { value: 'none',   name: 'None' },
+            { value: 'solid',  name: 'Solid' },
+            { value: 'dashed', name: 'Dashed' },
+            { value: 'dotted', name: 'Dotted' },
+            { value: 'double', name: 'Double' },
+            { value: 'groove', name: 'Groove' },
+            { value: 'ridge',  name: 'Ridge' },
+            { value: 'inset',  name: 'Inset' },
+            { value: 'outset', name: 'Outset' }
+        ];
+
+        var sides = [
+            { key: 'top',    label: 'Border top' },
+            { key: 'right',  label: 'Border right' },
+            { key: 'bottom', label: 'Border bottom' },
+            { key: 'left',   label: 'Border left' }
+        ];
+
+        sides.forEach(function(s){
+            sm.addProperty(sector, {
+                name:     s.label,
+                property: 'border-' + s.key,
+                type:     'composite',
+                properties: [
+                    {
+                        name:     'Width',
+                        property: 'border-' + s.key + '-width',
+                        type:     'integer',
+                        units:    ['px', 'em', 'rem'],
+                        defaults: '0'
+                    },
+                    {
+                        name:     'Style',
+                        property: 'border-' + s.key + '-style',
+                        type:     'select',
+                        defaults: 'solid',
+                        list:     styleOptions,
+                        options:  styleOptions
+                    },
+                    {
+                        name:     'Color',
+                        property: 'border-' + s.key + '-color',
+                        type:     'color',
+                        defaults: 'black'
+                    }
+                ]
+            });
         });
     }
 
