@@ -5,6 +5,7 @@ use BI_Signatures\Core\Post_Types;
 use BI_Signatures\Core\Meta_Fields;
 use BI_Signatures\Core\Renderer;
 use BI_Signatures\Core\Banner_Router;
+use BI_Signatures\Core\Presets;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;

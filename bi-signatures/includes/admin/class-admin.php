@@ -70,13 +70,21 @@ class Admin {
         wp_enqueue_media();
         wp_enqueue_style( 'bi-sig-admin', BI_SIG_URL . 'assets/css/admin.css', array(), BI_SIG_VERSION );
         wp_enqueue_script( 'bi-sig-admin', BI_SIG_URL . 'assets/js/admin.js', array( 'jquery' ), BI_SIG_VERSION, true );
+
+        $presets = array();
+        foreach ( \BI_Signatures\Core\Presets::all() as $id => $p ) {
+            $presets[ $id ] = $p['html'];
+        }
+
         wp_localize_script( 'bi-sig-admin', 'BISigAdmin', array(
             'ajax_url' => admin_url( 'admin-ajax.php' ),
             'nonce'    => wp_create_nonce( 'bi_sig_admin' ),
+            'presets'  => $presets,
             'i18n'     => array(
-                'pick_logo'   => __( 'Choisir un logo', 'bi-signatures' ),
-                'pick_banner' => __( 'Choisir une image de bannière', 'bi-signatures' ),
-                'use_image'   => __( 'Utiliser cette image', 'bi-signatures' ),
+                'pick_logo'        => __( 'Choisir un logo', 'bi-signatures' ),
+                'pick_banner'      => __( 'Choisir une image de bannière', 'bi-signatures' ),
+                'use_image'        => __( 'Utiliser cette image', 'bi-signatures' ),
+                'confirm_replace'  => __( 'Remplacer le contenu actuel de l\'éditeur ?', 'bi-signatures' ),
             ),
         ) );
     }

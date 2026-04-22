@@ -1,0 +1,10 @@
+.bi-sig-builder-toolbar{background:#fff;padding:10px 12px;border:1px solid #ddd;margin-bottom:0;border-bottom:none;}
+.bi-sig-builder-toolbar > div{margin:4px 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.bi-sig-builder-toolbar strong{margin-right:6px;}
+.bi-sig-var-chip{display:inline-block;background:#eef2ff;border:1px solid #c7d2fe;color:#1e3a8a;font-family:monospace;font-size:12px;padding:3px 8px;border-radius:12px;cursor:pointer;}
+.bi-sig-var-chip:hover{background:#c7d2fe;}
+.bi-sig-preset-inject{background:#f3f4f6;border:1px solid #d1d5db;border-radius:4px;padding:4px 10px;font-size:12px;cursor:pointer;}
+.bi-sig-preset-inject:hover{background:#e5e7eb;}
+#bi-sig-grapes{min-height:640px;border:1px solid #ddd;}
+.bi-sig-var-feedback{position:fixed;bottom:20px;right:20px;background:#1e3a8a;color:#fff;padding:8px 14px;border-radius:4px;display:none;z-index:100000;font-size:13px;}
+.gjs-pn-panel.gjs-pn-devices-c{display:none !important;}

@@ -22,6 +22,14 @@ class Post_Types {
 
     public function register_hooks() {
         add_action( 'init', array( $this, 'register' ) );
+        add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_block_editor' ), 10, 2 );
+    }
+
+    public function disable_block_editor( $use, $post_type ) {
+        if ( $post_type === self::TEMPLATE ) {
+            return false;
+        }
+        return $use;
     }
 
     public function register() {

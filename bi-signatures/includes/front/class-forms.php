@@ -36,7 +36,8 @@ class Forms {
                 'copy_failed'  => __( 'Impossible de copier.', 'bi-signatures' ),
                 'send_success' => __( 'Email envoyé.', 'bi-signatures' ),
                 'send_failed'  => __( 'Erreur lors de l\'envoi.', 'bi-signatures' ),
-                'confirm_del'  => __( 'Supprimer définitivement ?', 'bi-signatures' ),
+                'confirm_del'     => __( 'Supprimer définitivement ?', 'bi-signatures' ),
+                'confirm_replace' => __( 'Remplacer le contenu actuel ?', 'bi-signatures' ),
             ),
         ) );
 

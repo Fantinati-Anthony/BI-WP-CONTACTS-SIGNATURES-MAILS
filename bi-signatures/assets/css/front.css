@@ -11,3 +11,6 @@
 .bi-sig-form p label,.bi-sig-template-form p label{display:block;font-weight:600;margin-bottom:4px;}
 .bi-sig-form input[type=text],.bi-sig-form input[type=email],.bi-sig-form input[type=url],.bi-sig-form select{width:100%;max-width:420px;padding:6px;}
 .bi-sig-live-preview{margin-top:20px;padding:10px;background:#fafafa;border:1px dashed #ccc;}
+.bi-sig-template-form .bi-sig-presets{margin:10px 0 16px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.bi-sig-template-form .bi-sig-preset-btn{background:#f3f4f6;border:1px solid #d1d5db;border-radius:4px;padding:6px 10px;font-size:13px;cursor:pointer;}
+.bi-sig-template-form .bi-sig-preset-btn:hover{background:#e5e7eb;}
