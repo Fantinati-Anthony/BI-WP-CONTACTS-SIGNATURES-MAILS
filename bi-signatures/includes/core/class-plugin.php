@@ -31,6 +31,7 @@ final class Plugin {
             \BI_Signatures\Admin\Admin::instance()->register_hooks();
             \BI_Signatures\Admin\Settings::instance()->register_hooks();
             \BI_Signatures\Admin\Meta_Boxes::instance()->register_hooks();
+            \BI_Signatures\Admin\Visual_Builder::instance()->register_hooks();
             \BI_Signatures\Import\Importer::instance()->register_hooks();
         }
 
