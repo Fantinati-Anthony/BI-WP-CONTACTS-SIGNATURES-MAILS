@@ -15,8 +15,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Read plugin version
         id: version
@@ -26,9 +24,10 @@ jobs:
             echo "Could not parse Version header from bi-signatures/bi-signatures.php" >&2
             exit 1
           fi
+          SHORT_SHA=$(git rev-parse --short HEAD)
           echo "version=$VER" >> "$GITHUB_OUTPUT"
-          echo "short_sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
-          echo "Plugin version: $VER"
+          echo "short_sha=$SHORT_SHA" >> "$GITHUB_OUTPUT"
+          echo "Plugin version: $VER — commit: $SHORT_SHA"
 
       - name: Build plugin ZIP
         id: build
@@ -52,20 +51,7 @@ jobs:
           retention-days: 90
           if-no-files-found: error
 
-      - name: Check if release tag exists
-        id: tag_check
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          TAG="v${{ steps.version.outputs.version }}"
-          if gh release view "$TAG" --repo "${{ github.repository }}" >/dev/null 2>&1; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Create versioned release
-        if: steps.tag_check.outputs.exists == 'false'
+      - name: Create or update versioned release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.version.outputs.version }}
@@ -73,25 +59,12 @@ jobs:
           body: |
             Plugin WordPress **BI Contacts & Signatures Mails** v${{ steps.version.outputs.version }}
 
-            Commit : ${{ steps.version.outputs.short_sha }}
+            Dernier commit inclus : `${{ steps.version.outputs.short_sha }}`
+            Build du : ${{ github.event.head_commit.timestamp }}
 
             Téléchargez le fichier `.zip` ci-dessous et importez-le dans WordPress via *Extensions → Ajouter → Téléverser une extension*.
           files: build/${{ steps.build.outputs.zip_name }}
           draft: false
           prerelease: false
+          make_latest: "true"
           fail_on_unmatched_files: true
-
-      - name: Update rolling "latest-main" pre-release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: latest-main
-          name: Dernière build main
-          body: |
-            Build automatique du dernier merge sur `main`.
-
-            Version plugin : **${{ steps.version.outputs.version }}**
-            Commit : `${{ steps.version.outputs.short_sha }}`
-          files: build/${{ steps.build.outputs.zip_name }}
-          draft: false
-          prerelease: true
-          make_latest: false
